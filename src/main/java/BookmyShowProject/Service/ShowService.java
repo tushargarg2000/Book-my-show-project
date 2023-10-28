@@ -1,17 +1,22 @@
 package BookmyShowProject.Service;
 
+import BookmyShowProject.Enums.SeatType;
 import BookmyShowProject.Models.Movie;
 import BookmyShowProject.Models.Show;
+import BookmyShowProject.Models.ShowSeat;
 import BookmyShowProject.Models.Theater;
 import BookmyShowProject.Models.TheaterSeat;
 import BookmyShowProject.Repository.MovieRepository;
 import BookmyShowProject.Repository.ShowRepository;
+import BookmyShowProject.Repository.ShowSeatRespository;
 import BookmyShowProject.Repository.TheaterRepository;
 import BookmyShowProject.RequestDtos.AddShowRequest;
+import BookmyShowProject.RequestDtos.AddShowSeatsRequest;
 import BookmyShowProject.Transformers.ShowTransformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +31,9 @@ public class ShowService {
 
     @Autowired
     private ShowRepository showRepository;
+
+    @Autowired
+    private ShowSeatRespository showSeatRespository;
 
     public String addShow(AddShowRequest addShowRequest){
 
@@ -51,24 +59,45 @@ public class ShowService {
 
     }
 
-    public String createShowSeats(Integer showId){
-
+    public String createShowSeats(AddShowSeatsRequest showSeatsRequest){
 
         //I need to create the show Seats and save to the DB.
 
-        Show show = showRepository.findById(showId).get();
+        Show show = showRepository.findById(showSeatsRequest.getShowId()).get();
         Theater theater = show.getTheater();
         List<TheaterSeat> theaterSeatList = theater.getTheaterSeatList();
 
-        List<ShowSeat>
+        List<ShowSeat> showSeatList = new ArrayList<>();
 
 
-        for(TheaterSeat theaterSeat:theaterSeatList){
+        for(TheaterSeat theaterSeat:theaterSeatList) {
 
+            ShowSeat showSeat = ShowSeat.builder()
+                    .seatNo(theaterSeat.getSeatNo())
+                    .seatType(theaterSeat.getSeatType())
+                    .isAvailable(true)
+                    .isFoodAttached(false)
+                    .show(show)
+                    .build();
 
+            if(theaterSeat.getSeatType().equals(SeatType.CLASSIC)){
+                showSeat.setCost(showSeatsRequest.getPriceOfClassicSeats());
+            }
+            else{
+                showSeat.setCost(showSeatsRequest.getPriceOfPremiumSeats());
+            }
 
+            showSeatList.add(showSeat);
         }
 
+        show.setShowSeatList(showSeatList);
+
+        //Either save parent or save child
+
+        //child is alot of seats (you need to save that list)
+
+        showRepository.save(show);
+        return "The show seats have been added";
 
     }
 

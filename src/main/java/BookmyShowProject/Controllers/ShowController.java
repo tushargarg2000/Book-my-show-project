@@ -1,6 +1,7 @@
 package BookmyShowProject.Controllers;
 
 import BookmyShowProject.RequestDtos.AddShowRequest;
+import BookmyShowProject.RequestDtos.AddShowSeatsRequest;
 import BookmyShowProject.Service.ShowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +25,10 @@ public class ShowController {
     }
 
     @PostMapping("/createShowSeats")
-    public String enableShowSeats(@RequestParam("showId")Integer showId){
+    public String enableShowSeats(@RequestBody AddShowSeatsRequest addShowSeatsRequest) {
 
-
-
+        String result = showService.createShowSeats(addShowSeatsRequest);
+        return result;
     }
 
 

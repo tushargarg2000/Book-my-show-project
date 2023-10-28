@@ -1,9 +1,7 @@
 package BookmyShowProject.Models;
 
-import BookmyShowProject.Enums.SeatType;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,37 +10,42 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
-@Table(name = "show_seats")
-@Getter
-@Setter
-@Builder
+@Table(name = "ticket")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShowSeat {
+@Builder
+public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer showSeatId;
+    private Integer ticketId;
 
-    private String seatNo;
+    private String movieName;
 
-    @Enumerated(value = EnumType.STRING)
-    private SeatType seatType;
+    private Integer totalPrice;
 
-    private Integer cost;
+    private String bookedSeats;
 
-    private boolean isAvailable;
+    private LocalDate showDate;
 
-    private boolean isFoodAttached;
+    private LocalTime showTime;
 
+    private String theaterAddress;
 
     @JoinColumn
     @ManyToOne
     private Show show;
 
+    @JoinColumn
+    @ManyToOne
+    private User user;
 }
